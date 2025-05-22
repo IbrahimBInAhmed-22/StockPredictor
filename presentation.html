@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Trading CNN - AI-Powered Trading Predictions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0e27;
+            color: #ffffff;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0, 255, 255, 0.1);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        nav a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        nav a:hover::before {
+            left: 100%;
+        }
+
+        nav a:hover {
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        /* Sections */
+        section {
+            min-height: 100vh;
+            padding: 5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Hero Section */
+        #hero {
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            position: relative;
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #00ffff, #0080ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: brightness(1) drop-shadow(0 0 20px rgba(0, 255, 255, 0.5)); }
+            to { filter: brightness(1.2) drop-shadow(0 0 30px rgba(0, 255, 255, 0.8)); }
+        }
+
+        .hero-content p {
+            font-size: 1.5rem;
+            color: #a0a0a0;
+            margin-bottom: 2rem;
+        }
+
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+        }
+
+        .tech-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .tech-badge:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+            border-color: #00ffff;
+        }
+
+        /* Background Animation */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(0, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            from {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            to {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Overview Section */
+        #overview {
+            background: #0f1329;
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            padding: 2rem;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: #00ffff;
+            box-shadow: 0 20px 40px rgba(0, 255, 255, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* Architecture Section */
+        #architecture {
+            background: #0a0e27;
+        }
+
+        .architecture-diagram {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pipeline-step {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pipeline-step::after {
+            content: '→';
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            color: #00ffff;
+            opacity: 0.5;
+        }
+
+        .pipeline-step:last-child::after {
+            display: none;
+        }
+
+        .pipeline-step:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.3);
+        }
+
+        /* Results Section */
+        #results {
+            background: #0f1329;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(0, 128, 255, 0.1));
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+        }
+
+        .metric-value {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #00ffff, #0080ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .metric-label {
+            color: #a0a0a0;
+            margin-top: 0.5rem;
+        }
+
+        /* Code Preview */
+        .code-preview {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-preview::before {
+            content: '< / >';
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #00ffff;
+            opacity: 0.3;
+            font-family: monospace;
+        }
+
+        .code-preview code {
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            line-height: 1.4;
+            font-size: 0.9rem;
+        }
+
+        /* How It Works Section */
+        #how-it-works {
+            background: #0a0e27;
+        }
+
+        .process-timeline {
+            position: relative;
+            padding: 2rem 0;
+            margin: 3rem 0;
+        }
+
+        .process-timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #00ffff, #0080ff);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 2rem;
+            width: 45%;
+            margin: 2rem 0;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:nth-child(odd) {
+            margin-left: 0;
+        }
+
+        .timeline-item:nth-child(even) {
+            margin-left: 55%;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #00ffff;
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 0 20px #00ffff;
+        }
+
+        .timeline-item:nth-child(odd)::before {
+            right: -60px;
+        }
+
+        .timeline-item:nth-child(even)::before {
+            left: -60px;
+        }
+
+        .timeline-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .timeline-item {
+                width: 100%;
+                margin-left: 0 !important;
+            }
+
+            .process-timeline::before {
+                left: 20px;
+            }
+
+            .timeline-item::before {
+                left: -30px !important;
+                right: auto !important;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Section Headers */
+        h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            background: linear-gradient(135deg, #00ffff, #0080ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #00ffff;
+        }
+
+        p {
+            color: #a0a0a0;
+            line-height: 1.8;
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #00ffff, #0080ff);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="#hero">Home</a></li>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#architecture">Architecture</a></li>
+            <li><a href="#how-it-works">Process</a></li>
+            <li><a href="#results">Results</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <div class="particles"></div>
+        <div class="container">
+            <div class="hero-content fade-in">
+                <h1>Stock Trading CNN</h1>
+                <p>AI-Powered Stock Market Prediction Using Deep Learning</p>
+                <div class="tech-stack">
+                    <span class="tech-badge">PyTorch</span>
+                    <span class="tech-badge">CNN Architecture</span>
+                    <span class="tech-badge">Yahoo Finance</span>
+                    <span class="tech-badge">Computer Vision</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overview Section -->
+    <section id="overview">
+        <div class="container">
+            <h2 class="fade-in">Project Overview</h2>
+            <p class="fade-in" style="text-align: center; margin-bottom: 3rem;">
+                A sophisticated deep learning system that analyzes candlestick charts to predict stock trading signals
+            </p>
+            <div class="overview-grid">
+                <div class="feature-card fade-in">
+                    <span class="feature-icon">📊</span>
+                    <h3>Chart Analysis</h3>
+                    <p>Generates candlestick charts with technical indicators (MA20, MA50) from 10 years of historical data</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <span class="feature-icon">🤖</span>
+                    <h3>Deep Learning</h3>
+                    <p>Uses CNN architecture with transfer learning to classify charts into Buy, Sell, or Hold signals</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <span class="feature-icon">📈</span>
+                    <h3>Smart Labeling</h3>
+                    <p>Automatically labels data based on future price movements with 10% threshold over 10-day window</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <span class="feature-icon">🎯</span>
+                    <h3>High Accuracy</h3>
+                    <p>Achieves robust performance with comprehensive metrics including confusion matrix and F1-score</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section id="architecture">
+        <div class="container">
+            <h2 class="fade-in">System Architecture</h2>
+            <div class="architecture-diagram fade-in">
+                <div class="pipeline-step">
+                    <h3>1. Data Collection</h3>
+                    <p>Downloads 10 years of stock data from Yahoo Finance API</p>
+                    <div class="code-preview">
+                        <code>ticker = yf.Ticker('AAPL')<br>
+data = ticker.history(start=start_date, end=end_date)</code>
+                    </div>
+                </div>
+                <div class="pipeline-step">
+                    <h3>2. Technical Analysis</h3>
+                    <p>Calculates moving averages (MA20, MA50) and prepares data</p>
+                    <div class="code-preview">
+                        <code>data['MA20'] = data['Close'].rolling(window=20).mean()<br>
+data['MA50'] = data['Close'].rolling(window=50).mean()</code>
+                    </div>
+                </div>
+                <div class="pipeline-step">
+                    <h3>3. Chart Generation</h3>
+                    <p>Creates candlestick charts with 30-day windows and volume indicators</p>
+                </div>
+                <div class="pipeline-step">
+                    <h3>4. Intelligent Labeling</h3>
+                    <p>Labels data using established methodologies from online trading scripts with proper validation. Based on future price movement: Buy (10%+ gain), Sell (10%+ loss), Hold (otherwise)</p>
+                </div>
+                <div class="pipeline-step">
+                    <h3>5. CNN Training</h3>
+                    <p>Trains CNN model with data augmentation and 70/30 train-test split</p>
+                    <div class="code-preview">
+                        <code>model = create_cnn_model()<br>
+model.fc = nn.Sequential(<br>
+    nn.Dropout(0.5),<br>
+    nn.Linear(num_features, 512),<br>
+    nn.ReLU(),<br>
+    nn.Dropout(0.3),<br>
+    nn.Linear(512, 3)<br>
+)</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works">
+        <div class="container">
+            <h2 class="fade-in">How It Works</h2>
+            <div class="process-timeline">
+                <div class="timeline-item fade-in">
+                    <h3>Step 1: Historical Data</h3>
+                    <p>The system downloads comprehensive historical stock data including Open, High, Low, Close prices and Volume</p>
+                </div>
+                <div class="timeline-item fade-in">
+                    <h3>Step 2: Visual Representation</h3>
+                    <p>Converts numerical data into visual candlestick charts that capture market patterns and trends</p>
+                </div>
+                <div class="timeline-item fade-in">
+                    <h3>Step 3: Future Analysis</h3>
+                    <p>Uses validated labeling scripts from financial analysis repositories to analyze the next 10 days and determine if significant price movements occur, creating ground truth labels</p>
+                </div>
+                <div class="timeline-item fade-in">
+                    <h3>Step 4: Deep Learning</h3>
+                    <p>CNN architecture learns to recognize visual patterns in charts that correlate with future price movements</p>
+                </div>
+                <div class="timeline-item fade-in">
+                    <h3>Step 5: Prediction</h3>
+                    <p>The trained model can analyze new charts and predict whether to Buy, Sell, or Hold</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results">
+        <div class="container">
+            <h2 class="fade-in">Model Performance</h2>
+            <div class="metrics-grid">
+                <div class="metric-card fade-in">
+                    <div class="metric-value">25</div>
+                    <div class="metric-label">Training Epochs</div>
+                </div>
+                <div class="metric-card fade-in">
+                    <div class="metric-value">70/30</div>
+                    <div class="metric-label">Train/Test Split</div>
+                </div>
+                <div class="metric-card fade-in">
+                    <div class="metric-value">3</div>
+                    <div class="metric-label">Classes (Buy/Sell/Hold)</div>
+                </div>
+                <div class="metric-card fade-in">
+                    <div class="metric-value">10%</div>
+                    <div class="metric-label">Price Change Threshold</div>
+                </div>
+            </div>
+            
+            <div class="architecture-diagram fade-in" style="margin-top: 3rem;">
+                <h3>Key Features</h3>
+                <ul style="color: #a0a0a0; line-height: 2;">
+                    <li>✓ Automatic chart generation with technical indicators</li>
+                    <li>✓ Smart labeling using validated financial analysis scripts</li>
+                    <li>✓ Transfer learning with pre-trained CNN models</li>
+                    <li>✓ Data augmentation for improved generalization</li>
+                    <li>✓ Comprehensive evaluation with confusion matrix</li>
+                    <li>✓ Model checkpointing for best performance</li>
+                    <li>✓ Real-time inference capabilities</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Create floating particles
+        const particlesContainer = document.querySelector('.particles');
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 20 + 's';
+            particle.style.animationDuration = (20 + Math.random() * 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        // Smooth scrolling
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationDelay = '0.2s';
+                    entry.target.style.animationFillMode = 'forwards';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
