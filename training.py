@@ -515,7 +515,7 @@ class ModelInference:
             return None
 
 # Usage Example and Main Execution
-if _name_ == "_main_":
+if __name__ == "__main__":
     # Initialize the model trainer
     trainer = StockTradingCNN(symbol='AAPL')
     
